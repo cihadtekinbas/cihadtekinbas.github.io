@@ -1,0 +1,80 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const recent = posts.slice(0, 3);
+
+const skills = ["TypeScript", "Node.js", "Astro", "Linux", "Git", "Python"];
+
+const projects = [
+  {
+    name: "cihadtekinbas.github.io",
+    description: "My personal blog and portfolio — the site you're looking at. Built with Astro and deployed free on GitHub Pages.",
+    url: "/",
+  },
+  {
+    name: "Project placeholder",
+    description: "Your next project goes here. Add a link to your GitHub repo and a short description.",
+    url: "https://github.com/cihadtekinbas",
+  },
+  {
+    name: "Another project",
+    description: "Another idea you want to show off. Cards are easy to edit on this page.",
+    url: "https://github.com/cihadtekinbas",
+  },
+];
+---
+
+<BaseLayout
+  title="cihadtekinbas — Personal Site"
+  description="Blog and portfolio of cihadtekinbas."
+>
+  <section class="hero">
+    <h1>Hi, I'm cihadtekinbas.</h1>
+    <p class="role">
+      I build things with code. This is my little corner of the internet — a
+      portfolio and a blog.
+    </p>
+  </section>
+
+  <section>
+    <h2>Skills</h2>
+    <ul class="inline">
+      {skills.map((s) => <li>{s}</li>)}
+    </ul>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+    {projects.map((p) => (
+      <div class="project-card">
+        <h3><a href={p.url}>{p.name}</a></h3>
+        <p>{p.description}</p>
+      </div>
+    ))}
+  </section>
+
+  <section>
+    <h2>Latest posts</h2>
+    <ul class="post-list">
+      {recent.map((post) => (
+        <li>
+          <a href={`/blog/${post.id}/`}>
+            {post.data.title}
+          </a>
+          <div class="date">
+            {post.data.pubDate.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </div>
+        </li>
+      ))}
+    </ul>
+    <p><a href="/blog">View all posts →</a></p>
+  </section>
+</BaseLayout>
