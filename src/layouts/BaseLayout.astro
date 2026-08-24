@@ -8,6 +8,9 @@ interface Props {
 }
 
 const { title = "cihadtekinbas", description = "Personal site of cihadtekinbas" } = Astro.props;
+
+// Set by the Express backend (Astro.locals). Undefined in dev/static builds.
+const user = Astro.locals.user;
 ---
 
 <!doctype html>
@@ -26,6 +29,12 @@ const { title = "cihadtekinbas", description = "Personal site of cihadtekinbas" 
         <a class="brand" href="/">cihadtekinbas</a>
         <a href="/">Home</a>
         <a href="/blog">Blog</a>
+        {user && (
+          <span class="nav-user">
+            Hi, {user.login}
+            <a href="/auth/logout" class="signout">Sign out</a>
+          </span>
+        )}
       </nav>
     </header>
     <main class="container">

@@ -179,3 +179,58 @@ footer.site {
   padding: 1.5rem 0;
   text-align: center;
 }
+
+/* Login + auth UI */
+.nav-user {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+.nav-user .signout {
+  margin-left: 0.25rem;
+  font-weight: 600;
+}
+
+.login-hero {
+  max-width: 420px;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 4rem;
+}
+
+.login-hero h1 {
+  font-size: 2rem;
+  margin: 0 0 0.75rem;
+}
+
+.login-hero p {
+  color: var(--muted);
+  margin: 0 0 1.75rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:hover {
+  filter: brightness(1.08);
+  text-decoration: none;
+}
+
+.login-error {
+  margin-top: 1.25rem;
+  color: #dc2626;
+  font-size: 0.95rem;
+}
