@@ -1,0 +1,130 @@
+---
+// Subtle, performant full-page Three.js particle background.
+// Sits behind the page content; adapts to light/dark theme and
+// respects the user's reduced-motion preference.
+// Three.js is lazy-loaded as a separate async chunk so it never
+// delays first paint.
+---
+
+<style>
+  .bg3d {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    display: block;
+  }
+</style>
+
+<canvas id="bg3d" class="bg3d" aria-hidden="true"></canvas>
+
+<script>
+  import type * as Three from "three";
+
+  const canvas = document.getElementById("bg3d") as HTMLCanvasElement;
+  if (!canvas) throw new Error("Missing #bg3d canvas");
+
+  const darkMedia = window.matchMedia("(prefers-color-scheme: dark)");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  let scene!: Three.Scene;
+  let camera!: Three.PerspectiveCamera;
+  let renderer!: Three.WebGLRenderer;
+  let points!: Three.Points;
+  let material!: Three.PointsMaterial;
+  let mouseX = 0;
+  let mouseY = 0;
+  let running = !reduced.matches;
+
+  function particleColor() {
+    // Soft cyan on dark themes, a muted blue on light themes.
+    return darkMedia.matches ? 0x7dd3fc : 0x2563eb;
+  }
+
+  async function start() {
+    const THREE = await import("three");
+
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
+    camera.position.z = 12;
+
+    // Scale particle density to the viewport, capped for performance.
+    const count = Math.min(2600, Math.round((w * h) / 1100));
+    const positions = new Float32Array(count * 3);
+    for (let i = 0; i < count * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 26;
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+    material = new THREE.PointsMaterial({
+      color: particleColor(),
+      size: 0.06,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+
+    points = new THREE.Points(geometry, material);
+    scene.add(points);
+
+    renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: "high-performance",
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(w, h);
+
+    // Always draw one frame so reduced-motion users still see the scene.
+    renderer.render(scene, camera);
+    animate();
+  }
+
+  function animate() {
+    if (!running) return;
+    requestAnimationFrame(animate);
+
+    // Slow autonomous drift plus a gentle pull toward the cursor.
+    points.rotation.y += 0.0006 + mouseX * 0.0004;
+    points.rotation.x += 0.0002 + mouseY * 0.0004;
+
+    renderer.render(scene, camera);
+  }
+
+  function onResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  function onMouse(e: MouseEvent) {
+    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+  }
+
+  window.addEventListener("resize", onResize);
+  window.addEventListener("mousemove", onMouse);
+
+  // Re-tint if the user switches theme while the page is open.
+  darkMedia.addEventListener("change", () => {
+    material.color.setHex(particleColor());
+    if (!running) renderer.render(scene, camera);
+  });
+
+  // Start/stop on reduced-motion preference change.
+  reduced.addEventListener("change", (e) => {
+    running = !e.matches;
+    if (running) animate();
+    else renderer.render(scene, camera);
+  });
+
+  start();
+</script>
