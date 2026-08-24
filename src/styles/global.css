@@ -52,18 +52,22 @@ header.site {
 header.site nav {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  justify-content: center;
+  gap: 1.5rem;
   padding: 1rem 0;
 }
 
 header.site nav .brand {
   font-weight: 700;
   color: var(--fg);
-  margin-right: auto;
 }
 
 main {
   padding: 2.5rem 0;
+}
+
+.hero {
+  text-align: center;
 }
 
 .hero h1 {
@@ -80,6 +84,7 @@ main {
 
 section {
   margin: 2.5rem 0;
+  text-align: center;
 }
 
 h2 {
@@ -92,7 +97,9 @@ ul.inline {
   padding: 0;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.5rem;
+  text-align: center;
 }
 
 ul.inline li {
@@ -107,6 +114,7 @@ ul.inline li {
   border-radius: var(--radius);
   padding: 1rem 1.25rem;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .project-card h3 {
@@ -121,6 +129,7 @@ ul.inline li {
 .post-list {
   list-style: none;
   padding: 0;
+  text-align: center;
 }
 
 .post-list li {
@@ -133,6 +142,10 @@ ul.inline li {
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+}
+
+article.post {
+  text-align: center;
 }
 
 article.post h1 {
@@ -151,9 +164,18 @@ article.post img {
   height: auto;
 }
 
+/* Keep the article prose readable: centered block, left-aligned text. */
+article.post :is(p, li, blockquote, pre) {
+  text-align: left;
+  max-width: 65ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 footer.site {
   border-top: 1px solid var(--border);
   color: var(--muted);
   font-size: 0.9rem;
   padding: 1.5rem 0;
+  text-align: center;
 }
